@@ -1,0 +1,24 @@
+# Grundkonfiguration fuer die Simulation.
+# Fuer Live-Trading spaeter: separate config.live.yaml mit echten API-Keys,
+# NIEMALS Keys hier im Klartext committen.
+
+exchange: kraken          # ccxt exchange id, nur oeffentliche Endpunkte (kein API-Key noetig)
+symbol: "BTC/EUR"
+poll_interval_seconds: 60 # wie oft Preis + Signale aktualisiert werden
+
+portfolio:
+  starting_cash: 1000.0   # virtuelles Startkapital in EUR
+  max_trade_fraction: 0.20   # max. Anteil des Portfoliowerts pro Trade
+  min_cooldown_seconds: 900  # Mindestabstand zwischen zwei Trades
+
+strategy:
+  # Platzhalter-Signalquelle: SMA-Crossover auf Preis-Historie.
+  # Spaeter kommen weitere Quellen hinzu (z.B. discord:mo, twitter:xyz),
+  # die einfach zusaetzliche Zeilen in die "signals"-Tabelle schreiben.
+  momentum_short_window: 5
+  momentum_long_window: 20
+  buy_confidence_threshold: 0.5
+  sell_confidence_threshold: -0.5
+
+database:
+  path: "data/trading.db"
