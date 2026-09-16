@@ -8,10 +8,18 @@ Order verschickt - alles laeuft nur gegen eine lokale SQLite-Datenbank.
 
 ```
 bot/price_feed.py   -> holt Preise via ccxt (oeffentliche API, kein Key noetig)
-bot/strategy.py     -> generiert Signale (Platzhalter: SMA-Crossover) und
-                        aggregiert alle Signale zu einer Kauf/Verkauf-Entscheidung
+bot/strategy.py     -> zwei Strategie-Modi (config.yaml: strategy.mode):
+                        "multi_signal" (Standard-Implementierung: Momentum,
+                        Fear&Greed, Funding-Rate, 200-Tage-MA-Trend, DXY,
+                        gemittelt pro Quelle) oder "golden_cross" (klassischer
+                        SMA50/SMA200-Crossover, aktuell testweise aktiv, siehe
+                        5-Jahres-Backtest-Vergleich)
+bot/backtest.py      -> Backtest auf historischen Daten (Yahoo Finance fuer
+                        mehrjaehrige Preishistorie), vergleicht Bot, Buy&Hold,
+                        DCA und Golden Cross gegeneinander
 bot/portfolio.py     -> fuehrt die Entscheidung als Paper-Trade aus (Risiko-
-                        Limits: max. Anteil pro Trade, Cooldown)
+                        Limits: max. Anteil pro Trade, Cooldown, Handelsgebuehr,
+                        Stop-Loss/Take-Profit unabhaengig vom Signal-Score)
 bot/db.py            -> SQLite-Speicher fuer Preise, Signale, Trades, Portfolio
 dashboard/app.py     -> Streamlit-Dashboard: Portfolio-Wert vs. Buy&Hold
 ```

@@ -82,7 +82,7 @@ if trade_rows:
     show = pd.DataFrame([dict(r) for r in trade_rows])
     show["time"] = pd.to_datetime(show["ts"], unit="s")
     st.dataframe(
-        show[["time", "side", "price", "amount_btc", "cash_after", "btc_after", "reason"]],
+        show[["time", "side", "price", "amount_btc", "fee", "cash_after", "btc_after", "reason"]],
         width="stretch",
     )
 else:

@@ -17,9 +17,24 @@ def run_once(cfg, exchange) -> None:
     db.record_price(cfg.db_path, cfg.symbol, price)
     log.info("Preis %s = %.2f", cfg.symbol, price)
 
-    strategy.generate_momentum_signal(cfg)
+    if portfolio.check_stop_loss_take_profit(cfg, price):
+        state = db.get_portfolio_state(cfg.db_path)
+        value = state["cash"] + state["btc"] * price
+        log.info(
+            "Notausstieg (Stop-Loss/Take-Profit) ausgefuehrt. Portfolio: cash=%.2f EUR, btc=%.6f, Gesamtwert=%.2f EUR",
+            state["cash"], state["btc"], value,
+        )
+        return  # diesen Zyklus keine normale Entscheidung mehr treffen
 
-    decision, score, reason = strategy.decide(cfg)
+    if cfg.strategy.mode == "golden_cross":
+        decision, score, reason = strategy.decide_golden_cross(cfg, exchange)
+    else:
+        strategy.generate_momentum_signal(cfg)
+        strategy.generate_feargreed_signal(cfg)
+        strategy.generate_funding_signal(cfg)
+        strategy.generate_trend_signal(cfg, exchange)
+        strategy.generate_macro_dxy_signal(cfg)
+        decision, score, reason = strategy.decide(cfg)
     log.info("Entscheidung: %s (score=%.2f) - %s", decision, score, reason)
 
     portfolio.execute_decision(cfg, decision, score, reason, price)

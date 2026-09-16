@@ -11,6 +11,9 @@ class PortfolioConfig:
     starting_cash: float
     max_trade_fraction: float
     min_cooldown_seconds: int
+    fee_rate: float = 0.0015
+    stop_loss_pct: float = 0.05
+    take_profit_pct: float = 0.10
 
 
 @dataclass
@@ -19,6 +22,13 @@ class StrategyConfig:
     momentum_long_window: int
     buy_confidence_threshold: float
     sell_confidence_threshold: float
+    feargreed_refresh_seconds: int = 3600
+    funding_refresh_seconds: int = 1800
+    trend_refresh_seconds: int = 21600
+    macro_refresh_seconds: int = 21600
+    mode: str = "multi_signal"  # "multi_signal" (5-Quellen-Score) oder "golden_cross" (SMA50/SMA200)
+    golden_cross_short_window: int = 50
+    golden_cross_long_window: int = 200
 
 
 @dataclass

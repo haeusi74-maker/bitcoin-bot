@@ -10,8 +10,19 @@ portfolio:
   starting_cash: 1000.0   # virtuelles Startkapital in EUR
   max_trade_fraction: 0.20   # max. Anteil des Portfoliowerts pro Trade
   min_cooldown_seconds: 900  # Mindestabstand zwischen zwei Trades
+  fee_rate: 0.0015           # 0.15% pro Trade (realistischer Spot-Taker-Fee, z.B. Kraken/Coinbase)
+  stop_loss_pct: 0.05        # verkauft die GESAMTE Position sofort bei -5% ggue. Einstiegspreis (ignoriert Cooldown/max_trade_fraction)
+  take_profit_pct: 0.10      # verkauft die GESAMTE Position sofort bei +10% ggue. Einstiegspreis
 
 strategy:
+  # mode: "multi_signal" = 5-Quellen-Score (momentum/feargreed/funding/trend/dxy)
+  #       "golden_cross"  = klassischer SMA50/SMA200-Crossover, binaer investiert/Cash
+  # Testweise auf golden_cross gestellt, nachdem der 5-Jahres-Backtest zeigte,
+  # dass multi_signal deutlich schlechter abschneidet als Golden Cross/DCA/Buy&Hold.
+  mode: golden_cross
+  golden_cross_short_window: 50
+  golden_cross_long_window: 200
+
   # Platzhalter-Signalquelle: SMA-Crossover auf Preis-Historie.
   # Spaeter kommen weitere Quellen hinzu (z.B. discord:mo, twitter:xyz),
   # die einfach zusaetzliche Zeilen in die "signals"-Tabelle schreiben.
@@ -19,6 +30,10 @@ strategy:
   momentum_long_window: 20
   buy_confidence_threshold: 0.5
   sell_confidence_threshold: -0.5
+  feargreed_refresh_seconds: 3600  # Fear&Greed-Index aendert sich nur taeglich, nicht bei jedem Poll neu holen
+  funding_refresh_seconds: 1800    # Bitget Funding Rate aendert sich alle 8h, alle 30min reicht
+  trend_refresh_seconds: 21600     # MA200 auf Tageskerzen, alle 6h neu berechnen reicht locker
+  macro_refresh_seconds: 21600     # Dollar-Index (Yahoo Finance) aendert sich taeglich, alle 6h reicht
 
 database:
   path: "data/trading.db"
